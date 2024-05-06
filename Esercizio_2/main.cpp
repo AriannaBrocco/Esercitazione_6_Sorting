@@ -16,7 +16,7 @@ using namespace SortLibrary;
 
 
 // Funzione per generare un vettore casuale
-vector<int> generaVettoreCasuale(unsigned int dimensione)
+vector<int> generaVettoreCasuale(unsigned  int dimensione)
 {
     unsigned int n = 0;
     vector<int> vettore(dimensione);
@@ -30,30 +30,27 @@ vector<int> generaVettoreCasuale(unsigned int dimensione)
     return vettore;
 }
 
-int main(int argc, char **argv)
+int main()
 {
-    int dimensione_piccola = atoi(argv[1]);
-    int dimensione_elevata = atoi(argv[2]);
-    if (argc!=1)
-        cerr << "qualcosa non va" << endl;
+    int dimensione_piccola;
+    int dimensione_elevata;
+    int dimensione_ordinato;
 
-    // Genera un vettore casuale di interi
+    // Chiede all'utente di inserire le dimensioni dei vettori per effetture i test sulla velocità di esecuzione degli algoritmi
     cout <<  "Inserire dimensione piccola: " << endl;
     cin >> dimensione_piccola;
-    cout << "Hai inserito: " << dimensione_piccola << endl;
     cout <<  "Inserire dimensione elevata: " << endl;
     cin >> dimensione_elevata;
-    cout << "Hai inserito: " << dimensione_elevata << endl;
-    cout << "La dimensione elevata sara' utilizzata anche per il caso particolare" << endl;
-    vector<int> vettoreInteri_pic = generaVettoreCasuale(dimensione_piccola);
-    vector<int> vettoreInteri_el = generaVettoreCasuale(dimensione_elevata);
+    cout <<  "Inserire dimensione per un vettore gia' ordinato: " << endl;
+    cin >> dimensione_ordinato;
 
-
-    // Misura del tempo per ordinare con mergesort
-    // con vettore di piccola dimensione
+    // Misura del tempo necessario per ordinare vettori di piccole dimensioni con MergeSort
+    // Il ciclo si ripete 100 volte per poter avere una media dei tempi e quindi risultati più accurati
     double tempo_mergesort_pic = 0;
     double media_mergesort_pic = 0;
     for(unsigned int i=0; i< 100; i++){
+        // Genera un vettore casuale di interi
+        vector<int> vettoreInteri_pic = generaVettoreCasuale(dimensione_piccola);
         steady_clock::time_point t_begin = steady_clock::now();
         MergeSort(vettoreInteri_pic);
         steady_clock::time_point t_end = steady_clock::now();
@@ -65,10 +62,11 @@ int main(int argc, char **argv)
     cout<< "Algoritmo MergeSort: " << endl;
     cout<< "La media dei tempi necessari per ordinare vettori di piccole dimensioni e': " << fixed << setprecision(4) << media_mergesort_pic<< endl;
 
-    // con vettore di grandi dimensioni
+    // Con vettori di grandi dimensioni
     double tempo_mergesort_el = 0;
     double media_mergesort_el = 0;
     for(unsigned int i=0; i< 100; i++){
+        vector<int> vettoreInteri_el = generaVettoreCasuale(dimensione_elevata);
         steady_clock::time_point t_begin = steady_clock::now();
         MergeSort(vettoreInteri_el);
         steady_clock::time_point t_end = steady_clock::now();
@@ -79,11 +77,11 @@ int main(int argc, char **argv)
 
     cout<< "La media dei tempi necessari per ordinare vettori di grandi dimensioni e': " << fixed << setprecision(4) << media_mergesort_el<< endl;
 
-    // Misura del tempo per ordinare con bubblesort
-    // con vettore di piccola dimensione
+    // Misura del tempo necessario per ordinare vettori di piccole dimensioni con BubbleSort
     double tempo_bubblesort_pic = 0;
     double media_bubblesort_pic = 0;
     for(unsigned int i=0; i< 100; i++){
+        vector<int> vettoreInteri_pic = generaVettoreCasuale(dimensione_piccola);
         steady_clock::time_point t_begin = steady_clock::now();
         BubbleSort(vettoreInteri_pic);
         steady_clock::time_point t_end = steady_clock::now();
@@ -91,12 +89,15 @@ int main(int argc, char **argv)
         tempo_bubblesort_pic = tempo_bubblesort_pic + tempo_int;
     }
     media_bubblesort_pic = tempo_bubblesort_pic/100;
+
     cout<< "Algoritmo BubbleSort: " << endl;
     cout<< "La media dei tempi necessari per ordinare vettori di piccole dimensioni e: " << fixed << setprecision(4) << media_bubblesort_pic<< endl;
 
+    // Con vettori di grandi dimensioni
     double tempo_bubblesort_el = 0;
     double media_bubblesort_el = 0;
     for(unsigned int i=0; i< 100; i++){
+        vector<int> vettoreInteri_el = generaVettoreCasuale(dimensione_elevata);
         steady_clock::time_point t_begin = steady_clock::now();
         BubbleSort(vettoreInteri_el);
         steady_clock::time_point t_end = steady_clock::now();
@@ -104,16 +105,19 @@ int main(int argc, char **argv)
         tempo_bubblesort_el = tempo_bubblesort_el + tempo_int;
     }
     media_bubblesort_el = tempo_bubblesort_el/100;
+
     cout<< "La media dei tempi necessari per ordinare vettori di grandi dimensioni e': " << fixed << setprecision(4) << media_bubblesort_el<< endl;
 
     // Caso particolare: vettore già ordinato
+    // MergeSort
     double tempo_mergesort_ordinato = 0;
     double media_mergesort_ordinato = 0;
     for(unsigned int i=0; i< 100; i++){
+        vector<int> vettoreInteri_ord = generaVettoreCasuale(dimensione_ordinato);
         // Ordino il vettore per poi calcolare il tempo impiegato per ordinare un vettore già ordinato
-        MergeSort(vettoreInteri_el);
+        MergeSort(vettoreInteri_ord);
         steady_clock::time_point t_begin = steady_clock::now();
-        MergeSort(vettoreInteri_el);
+        MergeSort(vettoreInteri_ord);
         steady_clock::time_point t_end = steady_clock::now();
         double tempo_int = duration_cast<microseconds>(t_end - t_begin).count();
         tempo_mergesort_ordinato = tempo_mergesort_ordinato + tempo_int;
@@ -122,14 +126,14 @@ int main(int argc, char **argv)
 
     cout<< "Con MergeSort, la media dei tempi necessari per ordinare vettori gia' precedentemente ordinati e': " << fixed << setprecision(4) << media_mergesort_ordinato << endl;
 
-    // con vettore di grandi dimensioni
+    // BubbleSort
     double tempo_bubblesort_ordinato = 0;
     double media_bubblesort_ordinato = 0;
     for(unsigned int i=0; i< 100; i++){
-        // Ordino il vettore per poi calcolare il tempo impiegato per ordinare un vettore gia' ordinato
-        BubbleSort(vettoreInteri_el);
+        vector<int> vettoreInteri_ord = generaVettoreCasuale(dimensione_ordinato);
+        BubbleSort(vettoreInteri_ord);
         steady_clock::time_point t_begin = steady_clock::now();
-        BubbleSort(vettoreInteri_el);
+        BubbleSort(vettoreInteri_ord);
         steady_clock::time_point t_end = steady_clock::now();
         double tempo_int = duration_cast<microseconds>(t_end - t_begin).count();
         tempo_bubblesort_ordinato = tempo_bubblesort_ordinato + tempo_int;
@@ -138,7 +142,35 @@ int main(int argc, char **argv)
 
     cout<< "Con BubbleSort, la media dei tempi necessari per ordinare vettori gia' precedentemente ordinati e': " << fixed << setprecision(4) << media_bubblesort_ordinato<< endl;
 
+    // Confronto tra i due algoritmi
+    string alg1 = "MergeSort";
+    string alg2 = "BubbleSort";
+    if (media_mergesort_pic < media_bubblesort_pic)
+    {
+        cout << alg1 << " e' piu' veloce di " << alg2 << " per vettori di dimensione piccola: " << dimensione_piccola << endl;
+    }
+    else
+    {
+        cout << alg2 << " e' piu' veloce di " << alg1 << " per vettori di dimensione piccola: " << dimensione_piccola << endl;
+    }
 
+    if (media_mergesort_el < media_bubblesort_el)
+    {
+        cout << alg1 << " e' piu' veloce di " << alg2 << " per vettori di dimensione grande: " << dimensione_elevata << endl;
+    }
+    else
+    {
+        cout << alg2 << " e' piu' veloce di " << alg1 << " per vettori di dimensione grande: " << dimensione_elevata << endl;
+    }
+
+    if (media_mergesort_ordinato < media_bubblesort_ordinato)
+    {
+        cout << alg1 << " e' piu' veloce di " << alg2 << " per vettori gia' precedentemente ordinati di dimensione: " << dimensione_ordinato << endl;
+    }
+    else
+    {
+        cout << alg2 << " e' piu' veloce di " << alg1 << " per vettori gia' precedentemente ordinati di dimensione: " << dimensione_ordinato << endl;
+    }
 
     return 0;
 }
